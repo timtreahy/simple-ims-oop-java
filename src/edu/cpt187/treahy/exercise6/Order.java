@@ -1,11 +1,11 @@
 //AUTHOR: Tim Treahy
 //COURSE: CPT 187
-//PURPOSE: Retrieve data concerning item names,
+//PURPOSE: Retrieve item names,
 //item ids, discounts, etc. Then calculate taxes,
 //totals, etc.
-//STARTDATE: 2/11/2021
+//STARTDATE: 2/18/2021
 
-package edu.cpt187.treahy.exercise5;
+package edu.cpt187.treahy.exercise6;
 
 public class Order
 {

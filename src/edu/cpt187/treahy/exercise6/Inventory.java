@@ -3,8 +3,9 @@
 //PURPOSE: The user will be able to look into
 //inventories and make requests. We will organize
 //and sort the inventory.
-//STARTDATE: 2/11/2021
-package edu.cpt187.treahy.exercise5;
+//STARTDATE: 2/18/2021
+
+package edu.cpt187.treahy.exercise6;
 
 import java.util.Random;
 import java.io.FileInputStream;
@@ -48,12 +49,11 @@ public class Inventory
 		inStockCounts[itemSearchIndex] = inStockCounts[itemSearchIndex] - borrowedHowMany; 
 	}
 	public void setLoadItems(String borrowedFileName)
-	{//load items from a file
-		recordCount = RESET_VALUE;
+	{//load items from a file		
 		try
 		{//try to open file
+			recordCount = RESET_VALUE;
 			Scanner infile = new Scanner (new FileInputStream(borrowedFileName));
-			
 			while (infile.hasNext() == true && (recordCount < MAX_RECORDS))
 			{//while there are still items to read in the file
 				//read a record item by item
@@ -77,11 +77,10 @@ public class Inventory
 	//OVERLOADED setLoadItems including borrowedSize from master file
 	public void setLoadItems(String borrowedFileName, int borrowedSize)
 	{//load items from a master file
-		recordCount = RESET_VALUE;
 		try
 		{//try to open file
+			recordCount = RESET_VALUE;
 			Scanner infile = new Scanner (new FileInputStream(borrowedFileName));
-			
 			while (infile.hasNext() == true && (recordCount < MAX_RECORDS && borrowedSize < MAX_RECORDS))
 			{//while there are still items to read in the file
 				//read a record item by item
@@ -112,17 +111,17 @@ public class Inventory
 	{
 		{//start setBubbleSort
 					
-			int localLast = 0;
-			int localIndex = 0;
+			int localLast = RESET_VALUE;
+			int localIndex = RESET_VALUE;
 			boolean swapValues = false;
 
 			//assign last to last element index position 
 			localLast = recordCount - ONE;
 			
-			while (localLast > 0)
+			while (localLast > RESET_VALUE)
 			{//while array size is greater than 0
 
-				localIndex = 0;
+				localIndex = RESET_VALUE;
 				swapValues = false;
 
 				while (localIndex < localLast)
@@ -138,7 +137,7 @@ public class Inventory
 
 				if (swapValues == false)
 				{//after array is sorted
-					localLast = 0;
+					localLast = RESET_VALUE;
 				}//end array sort
 				else
 				{//decrement last
@@ -150,12 +149,12 @@ public class Inventory
 	public void setSwapArrayElements(int borrowedIndex)
 	{//start setSwapArrayElements
 								
-				int localID = 0;
+				int localID = RESET_VALUE;
 				String localName = ""; 
-				double localPrice = 0.0; 
-				int localInStockCount = 0;
-				int localQuantity = 0; 
-				double localOrderTotals = 0.0;
+				double localPrice = RESET_VALUE; 
+				int localInStockCount = RESET_VALUE;
+				int localQuantity = RESET_VALUE; 
+				double localOrderTotals = RESET_VALUE;
 				
 				//swap ids
 				localID = itemIDs[borrowedIndex];
@@ -245,8 +244,8 @@ public class Inventory
 	}
 	public double getGrandTotal()
 	{
-		int localIndex = 0;
-		double localGrandTotal = 0.0;
+		int localIndex = RESET_VALUE;
+		double localGrandTotal = RESET_VALUE;
 		while (localIndex < orderTotals.length)
 		{
 			localGrandTotal = localGrandTotal + orderTotals[localIndex];
@@ -257,12 +256,12 @@ public class Inventory
 	public int getSearchResults(int borrowedBorrowedTargetID)
 	{//utilizes search logic
 		
-		int localFirst = 0;
-		int localMid = 0;
-		int localLast = 0;
+		int localFirst = RESET_VALUE;
+		int localMid = RESET_VALUE;
+		int localLast = RESET_VALUE;
 		boolean localFound = false;
 		
-		localLast = recordCount - 1;
+		localLast = recordCount - ONE;
 		while (localFirst <= localLast && localFound == false)
 		{
 			localMid = (localFirst + localLast) / 2;
@@ -274,11 +273,11 @@ public class Inventory
 			{
 				if (itemIDs[localMid] < borrowedBorrowedTargetID)
 				{
-					localFirst = localMid + 1;
+					localFirst = localMid + ONE;
 				}
 				else
 				{
-					localLast = localMid - 1;
+					localLast = localMid - ONE;
 				}
 			}
 		}

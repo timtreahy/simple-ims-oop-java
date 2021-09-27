@@ -1,9 +1,11 @@
 //AUTHOR: Tim Treahy
 //COURSE: CPT 187
-//PURPOSE: This will keep track of the orders you've made.
-//STARTDATE: 2/11/2021
+//PURPOSE: Once you've decided that you want to purchase
+//something, this will help finalize the purchase.
+//This works like a memory that you can access later.
+//STARTDATE: 2/18/2021
 
-package edu.cpt187.treahy.exercise5;
+package edu.cpt187.treahy.exercise6;
 
 import java.io.PrintWriter;
 import java.io.FileWriter;
@@ -29,10 +31,16 @@ public class WriteOrder {
 
 				try
 				{//try to write to file
-					PrintWriter filePW = new PrintWriter(new FileWriter(masterFileName, true));
+					PrintWriter filePW = new PrintWriter(
+							new FileWriter(masterFileName, true));
 
 					//write a record
-					filePW.printf("%n%d\t%s\t%f\t%d\t%.2f%n", borrowedItemID, borrowedItemName, borrowedItemPrice, borrowedQuantity,borrowedOrderCost);
+					filePW.printf("%n%d\t%s\t%f\t%d\t%.2f%n", 
+							borrowedItemID, 
+							borrowedItemName, 
+							borrowedItemPrice, 
+							borrowedQuantity,
+							borrowedOrderCost);
 					fileFoundFlag = true;
 					//close File
 					filePW.close();
