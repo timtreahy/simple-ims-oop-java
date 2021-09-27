@@ -1,40 +1,46 @@
-package edu.cpt187.treahy.exercise4;
+//AUTHOR: Tim Treahy
+//COURSE: CPT 187
+//PURPOSE: The user loads items from the inventory, and
+//the user is able to make purchases based on listed
+//items. The user works their way through menus, and the
+//system remembers what has been purchased.
+//STARTDATE: 2/11/2021
 
-//Author:Tim Treahy
-//Course:CPT 187
-//Purpose: Load in your inventory, and request to buy items. We can check your inventory for you and tell you what is available.
-//Start Date:2/4/2021
+package edu.cpt187.treahy.exercise5;
 
 import java.util.Scanner;
 
 
-public class MainClass 
-{
+
+public class MainClass {
 
 	public static final char[] MENU_CHARS = {'A', 'B', 'Q'};
 	public static final String[] MENU_OPTIONS = {"Load Inventory", "Create Order", "Quit"};
 	public static final char[] SUB_MENU_CHARS = {'A', 'B', 'C', 'D'};
 	public static final String INVENTORY_FILE_NAME = "MasterOrderFile.dat";
+	
 	public static void main(String[] args)
 	{
-		//initialize scanner object
-		Scanner input = new Scanner (System.in);
-
+		
 		//initialize variables
 		String userName = "";
 		char menuSelection;
-
+		
+		//initialize scanner object
+		Scanner input = new Scanner (System.in);
 		//create new Order from order class
 		Order currentOrder = new Order();
 		//create new Inventory from inventory class
 		Inventory currentInventory = new Inventory();
-		
+		//create new Write Order from write order class
+		WriteOrder orders = new WriteOrder(INVENTORY_FILE_NAME);
 		//welcome banner
 		displayWelcomeBanner();
 		//userName
 		userName = getUserName(input);
 		//menuSelection
 		menuSelection = validateMainMenu(input);
+		
 
 		//while not quit
 		while (menuSelection != 'Q')
@@ -50,7 +56,7 @@ public class MainClass
 				{//show how many records observed
 					displayRecordReport(currentInventory.getRecordCount());
 				}
-			}
+			}//end if menuSelection == 'A'
 			else
 			{//access inventory and place order
 				currentInventory.setSearchIndex(validateSearchValue(input));
@@ -61,6 +67,7 @@ public class MainClass
 				else
 				{
 					currentOrder.setLastItemSelectedIndex(currentInventory.getItemSearchIndex());
+					currentOrder.setItemID(currentInventory.getItemIDs());
 					currentOrder.setItemName(currentInventory.getItemNames());
 					currentOrder.setItemPrice(currentInventory.getItemPrices());
 					currentOrder.setHowMany(validateHowMany(input));
@@ -70,11 +77,21 @@ public class MainClass
 					}
 					else
 					{//user is ordering
-						currentOrder.setDiscountType(validateDiscountMenu(input, currentInventory.getDiscountNames(), currentInventory.getDiscountRates()));
+						currentOrder.setDiscountType(
+								validateDiscountMenu(
+										input, 
+										currentInventory.getDiscountNames(), 
+										currentInventory.getDiscountRates()));
 						currentOrder.setDiscountName(currentInventory.getDiscountNames());
 						currentOrder.setDiscountRate(currentInventory.getDiscountRates());
 						currentOrder.setDecreaseInStock(currentInventory);
-						currentOrder.setPrizeName(currentInventory.getPrizeNames(), currentInventory.getRandomNumber());
+						currentOrder.setPrizeName(currentInventory.getPrizeNames(),	currentInventory.getRandomNumber());
+						orders.setWriteOrder(
+								currentOrder.getItemID(), 
+								currentOrder.getItemName(), 
+								currentOrder.getItemPrice(), 
+								currentOrder.getHowMany(), 
+								currentOrder.getTotalCost());						
 						if (currentOrder.getDiscountRate() > 0.0)
 						{//the user selected a discount option
 							displayOrderReport
@@ -118,15 +135,18 @@ public class MainClass
 
 		}//end while
 
-		if (currentOrder.getDiscountCounts()!=null)
+		if (orders.getRecordCount() > 0)
 		{//did the user successfully order, if so print receipt
+			currentInventory.setLoadItems(orders.getFileName(), orders.getRecordCount());
 			displayFinalReport
 			(
-					currentInventory.getDiscountNames(),
-					currentOrder.getDiscountCounts(),
-					currentInventory.getPrizeNames(),
-					currentOrder.getPrizeCounts()
-					);
+					currentInventory.getItemIDs(),
+					currentInventory.getItemNames(),
+					currentInventory.getItemPrices(),
+					currentInventory.getOrderQuantities(),
+					currentInventory.getOrderTotals(),
+					currentInventory.getRecordCount(),
+					currentInventory.getGrandTotal());
 		}//end receipt
 
 		displayFarewellMessage();
@@ -286,47 +306,44 @@ public class MainClass
 		System.out.printf("\n\n\n%-60s\n", "~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~");
 		System.out.printf("%-8s\n", "ORDER REPORT");
 		System.out.printf("%-60s\n", "~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~");
-		System.out.printf("%-25s%2s%-17s\n\n", "Customer Name:", "", userName);
-		System.out.printf("%-25s%2s%-17s\n", "Item Name:", "", borrowedItemName);
-		System.out.printf("%-26s%2s%15.2f\n\n", "Item Price:", "$", borrowedItemPrice);
-		System.out.printf("%-25s%2s%-17s\n", "Discount Name:", "", borrowedDiscountName);
-		System.out.printf("%-26s%17.2f%2s\n", "Discount Rate:", (borrowedDiscountRate*100), "%");
-		System.out.printf("%-26s%2s%15.2f\n", "Discount Amount:", "$", borrowedDiscountAmt);
-		System.out.printf("%-26s%2s%15.2f\n\n", "Discount Price:", "$", borrowedDiscountPrice);
-		System.out.printf("%-26s%2s%15d\n\n", "Quantity:", "", borrowedHowMany);
-		System.out.printf("%-26s%2s%15.2f\n", "Subtotal:", "$", borrowedSubTotal);
-		System.out.printf("%-26s%17.2f%2s\n", "Tax Rate:", (borrowedTaxRate*100), "%");
-		System.out.printf("%-26s%2s%15.2f\n\n", "Tax Amount:", "$", borrowedTaxAmt);
-		System.out.printf("%-26s%2s%15.2f\n\n", "Order Total:", "$", borrowedTotalCost);
-		System.out.printf("%-25s%2s%-17s\n\n", "Prize:", "", borrowedPrizeName);
-		System.out.printf("%s%-2d%s%s%s\n", "Buy more now: Only ", borrowedInStockCount, "", borrowedItemName, "s left in-stock!");
+		System.out.printf("%-25s%2s%-17s\n", "Item Name", "", borrowedItemName);
+		System.out.printf("%-26s%2s%15.2f\n\n", "Item Price", "$", borrowedItemPrice);
+		System.out.printf("%-25s%2s%-17s\n", "Discount Name", "", borrowedDiscountName);
+		System.out.printf("%-26s%16.1f%3s\n", "Discount Rate", (borrowedDiscountRate*100), "%");
+		System.out.printf("%-26s%2s%15.2f\n", "Discount Amount", "$", borrowedDiscountAmt);
+		System.out.printf("%-26s%2s%15.2f\n\n", "Discounted Price", "$", borrowedDiscountPrice);
+		System.out.printf("%-26s%2s%15d\n\n", "Quantity", "", borrowedHowMany);
+		System.out.printf("%-26s%2s%15.2f\n", "Subtotal", "$", borrowedSubTotal);
+		System.out.printf("%-26s%16.1f%3s\n", "Tax Rate", (borrowedTaxRate*100), "%");
+		System.out.printf("%-26s%2s%15.2f\n", "Tax Amount", "$", borrowedTaxAmt);
+		System.out.printf("%-26s%2s%15.2f\n", "Order Total", "$", borrowedTotalCost);
+		System.out.printf("%-25s%2s%-17s\n", "Prize", "", borrowedPrizeName);
+		System.out.printf("%s%-2d%s%s\n", "Buy more now: Only ", borrowedInStockCount, borrowedItemName, "s left in-stock!");
 		System.out.printf("%-60s\n", "~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~");
 	}
 	public static void displayFinalReport
 	(
-			String[] borrowedDiscountNames, 
-			int[] borrowedDiscountCounts, 
-			String[] borrowedPrizeNames, 
-			int[] borrowedPrizeCounts)
+			int[] borrowedItemIDs,
+			String[] borrowedItemNames,
+			double[] borrowedItemPrices,
+			int[] borrowedOrderQuantities,
+			double[] borrowedOrderTotals,
+			int borrowedRecordCount,
+			double borrowedGrandTotal)
 	{
-		int localDiscountIndex = 0;
-		int localPrizeIndex = 0;
+		int localIndex = 0;
+		
 		System.out.printf("\n%s", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		System.out.printf("\n%s", "FINAL REPORT");
-		System.out.printf("\n%s\n", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-		System.out.printf("\n%s\n", "Discount counts:");
-		while (localDiscountIndex < borrowedDiscountNames.length)
+		System.out.printf("\n%s", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.printf("\n%-5s%-25s%-8s%-3s%-8s", "ID", "NAME", "PRICE", "QTY", "TOTAL");
+		while (localIndex < borrowedItemIDs.length)
 		{
-			System.out.printf("%-35s%2s\n", borrowedDiscountNames[localDiscountIndex], borrowedDiscountCounts[localDiscountIndex]);
-			localDiscountIndex++;
+			System.out.printf("\n%-5d%-25s%s%-7.2f%-3d%s%4.2f", borrowedItemIDs[localIndex], borrowedItemNames[localIndex], "$ ", borrowedItemPrices[localIndex], borrowedOrderQuantities[localIndex], "$ ", borrowedOrderTotals[localIndex]);
+			localIndex++;
 		}
-		System.out.printf("\n%s\n", "Prize counts:");
-		while (localPrizeIndex < borrowedPrizeNames.length)
-		{
-			System.out.printf("%-35s%2s\n", borrowedPrizeNames[localPrizeIndex], borrowedPrizeCounts[localPrizeIndex]);
-			localPrizeIndex++;
-		}
+		System.out.printf("\n\n%s", "GRAND TOTAL");
+		System.out.printf("\n%s%7.2f", "$", borrowedGrandTotal);
 		System.out.printf("\n%s\n", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 	}
 
@@ -400,5 +417,6 @@ public class MainClass
 		return localSelection;
 	}
 }//end class
+
 
 

@@ -1,17 +1,18 @@
-package edu.cpt187.treahy.exercise4;
+//AUTHOR: Tim Treahy
+//COURSE: CPT 187
+//PURPOSE: Retrieve data concerning item names,
+//item ids, discounts, etc. Then calculate taxes,
+//totals, etc.
+//STARTDATE: 2/11/2021
 
-//Author:Tim Treahy
-//Course:CPT 187
-//Purpose: This will take a count of what you are ordering, kind of like a receipt after the fact.
-//Start Date:2/4/2021
+package edu.cpt187.treahy.exercise5;
 
 public class Order
 {
 	//initialize variables
 	private final double TAX_RATE = .075;
-	private int[] discountCounts;
-	private int[] prizeCounts;
 	private int discountType = 0;
+	private int itemID = 0;
 	private String itemName = "";
 	private double itemPrice = 0.0;
 	private String discountName = "";
@@ -31,6 +32,10 @@ public class Order
 		lastItemSelectedIndex = borrowedSearchIndex;
 		//lastItemSelectedIndex = borrowedSearchIndex - 'A';
 	}
+	public void setItemID(int[] borrowedItemIDs)
+	{
+		itemID = borrowedItemIDs[lastItemSelectedIndex];
+	}
 	public void setItemName(String[] borrowedItemNames)
 	{//set item name
 		itemName = borrowedItemNames[lastItemSelectedIndex]; 
@@ -49,12 +54,7 @@ public class Order
 	}
 	public void setDiscountName(String[] borrowedDiscountNames)
 	{//set discount counts
-		if (discountCounts == null)
-		{//if the discount array is empty, fill it
-			discountCounts = new int [borrowedDiscountNames.length];
-		}//set discount name and increment discount
 		discountName = borrowedDiscountNames[discountType]; 
-		discountCounts[discountType] ++;
 	}
 	public void setDiscountRate(double[] borrowedDiscountRate)
 	{//set discount rate
@@ -62,12 +62,7 @@ public class Order
 	}
 	public void setPrizeName(String[] borrowedPrizeNames, int borrowedPrizeIndex)
 	{//set prize name
-		if (prizeCounts == null)
-		{//if the prize array is empty, fill it
-			prizeCounts = new int [borrowedPrizeNames.length];
-		}//set prize name and increment prizes
 		prizeName = borrowedPrizeNames[borrowedPrizeIndex]; 
-		prizeCounts[borrowedPrizeIndex] ++;
 	}
 	public void setDecreaseInStock(Inventory borrowedInventoryObject)
 	{//set decrease stock to remove items
@@ -79,6 +74,10 @@ public class Order
 	public int getInStockCount(int[] borrowedInStockCounts)
 	{//return in stock counts
 		return borrowedInStockCounts[lastItemSelectedIndex];
+	}
+	public int getItemID()
+	{
+		return itemID;
 	}
 	public String getItemName()
 	{//return item name
@@ -100,10 +99,6 @@ public class Order
 	{//return discount rate
 		return discountRate;
 	}
-	public int[] getDiscountCounts()
-	{//return discount count
-		return discountCounts;
-	}
 	public double getDiscountAmt()
 	{//return discount amount
 		return (itemPrice * discountRate);
@@ -115,10 +110,6 @@ public class Order
 	public String getPrizeName()
 	{//return prize name
 		return prizeName;
-	}
-	public int[] getPrizeCounts()
-	{//return prize count
-		return prizeCounts;
 	}
 	public double getSubTotal()
 	{//return sub total
