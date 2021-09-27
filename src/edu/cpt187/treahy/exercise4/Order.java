@@ -1,18 +1,14 @@
-package edu.cpt187.treahy.exercise3;
+package edu.cpt187.treahy.exercise4;
 
 //Author:Tim Treahy
 //Course:CPT 187
-//Purpose:This is the money aspect.
-//Purpose: How should tax be calculated,
-//Purpose: how does tax affect final price?
-//Start Date:1/28/2021
+//Purpose: This will take a count of what you are ordering, kind of like a receipt after the fact.
+//Start Date:2/4/2021
 
-public class Order 
+public class Order
 {
-
 	//initialize variables
 	private final double TAX_RATE = .075;
-	private int[] itemCounts;
 	private int[] discountCounts;
 	private int[] prizeCounts;
 	private int discountType = 0;
@@ -29,19 +25,15 @@ public class Order
 	}
 
 	////SET/////
-	
-	public void setLastItemSelectedIndex(char borrowedMenuSelection)
+
+	public void setLastItemSelectedIndex(int borrowedSearchIndex)
 	{//set last item selected
-		lastItemSelectedIndex = borrowedMenuSelection - 'A';
+		lastItemSelectedIndex = borrowedSearchIndex;
+		//lastItemSelectedIndex = borrowedSearchIndex - 'A';
 	}
 	public void setItemName(String[] borrowedItemNames)
 	{//set item name
-		if (itemCounts==null)
-		{//if the item array is empty, fill it
-			itemCounts = new int [borrowedItemNames.length];
-		}//set item name and increment item
 		itemName = borrowedItemNames[lastItemSelectedIndex]; 
-		itemCounts[lastItemSelectedIndex] ++;
 	}
 	public void setItemPrice(double[] borrowedItemPrices)
 	{//set item price
@@ -79,7 +71,7 @@ public class Order
 	}
 	public void setDecreaseInStock(Inventory borrowedInventoryObject)
 	{//set decrease stock to remove items
-		borrowedInventoryObject.setReduceStock(howMany, lastItemSelectedIndex);
+		borrowedInventoryObject.setReduceStock(howMany);
 	}
 
 	////GET/////
@@ -95,10 +87,6 @@ public class Order
 	public double getItemPrice()
 	{//return item price
 		return itemPrice;
-	}
-	public int[] getItemCounts()
-	{//return item counts
-		return itemCounts;
 	}
 	public int getHowMany()
 	{//return how many
